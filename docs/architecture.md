@@ -126,6 +126,10 @@ Step by step:
 
 A sensible way to start is watch-only for a few days, read the ledger, then switch it on.
 
+This is what watch-only looks like on the dashboard. The dotted red line is where the wall would be, and the red tracks running through it are the two calls that got out.
+
+![The dashboard in watch-only mode](../images/watching.jpg)
+
 ## Choices I made on purpose
 
 **No AI inside.** If the guard is an AI, the guard can be tricked the same way the agent can. Cordon is plain logic. The same input always gives the same answer.
