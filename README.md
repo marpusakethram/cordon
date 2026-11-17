@@ -112,7 +112,7 @@ I'd rather tell you now than have you find out later.
 - **You have to sort your tools into the buckets.** If you put a tool in the wrong bucket, or forget one, Cordon can't protect that path. The dashboard lists any tool you forgot.
 - **It's strict.** Once an agent has read both stranger stuff and private stuff, it can't send anything out for the rest of that run, even if the request was innocent. You start a fresh run to reset it.
 - **The "show its work" part can be dodged.** A clever attacker can scramble data in ways Cordon won't recognize. The main rule doesn't depend on that part, so the block still happens. You just get less detail about what was inside.
-- **It's early.** I've tested it hard with my own test agent and tools. I haven't yet tested it with every AI agent product out there.
+- **It's early.** I've tested it hard with my own test agent and tools, and it passed all 26 checks against the official MCP test server. I haven't yet tested it with a real AI agent product driving it.
 
 ## Where's the code?
 

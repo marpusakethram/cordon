@@ -8,7 +8,7 @@ AI agents can be tricked by hidden instructions in the things they read. When th
 
 Most defenses try to detect the trick. Cordon takes a different path. It sits between the agent and its tools and enforces one rule: an agent that has read both untrusted content and private data may not use any tool that sends data out. The rule is plain logic, with no AI involved, so it can't be talked around.
 
-In my tests, a scripted agent that fully obeys a hidden instruction leaked a secrets file in watch-only mode and leaked nothing with Cordon switched on. A second part of Cordon, which recognizes private data inside outgoing messages, found every one of 480 randomly generated leaks across 8 kinds of scrambling, with no false alarms on 200 unrelated messages. Every decision took under 2.5 milliseconds on a normal laptop.
+In my tests, a scripted agent that fully obeys a hidden instruction leaked a secrets file in watch-only mode and leaked nothing with Cordon switched on. A second part of Cordon, which recognizes private data inside outgoing messages, found every one of 480 randomly generated leaks across 8 kinds of scrambling, with no false alarms on 200 unrelated messages. Every decision took under 2.5 milliseconds on a normal laptop. Placed in front of the official MCP test server, Cordon passed all 26 compatibility and safety checks.
 
 This write-up explains the problem, the idea, how Cordon is built, how I tested it, and where it falls short.
 
@@ -122,9 +122,27 @@ I tested the chained log by editing a line, deleting a line, and swapping lines 
 
 MCP changed a lot in its July 2026 version [5]. I tested Cordon with a client and servers speaking the older style, the newer style, and a mix of both in the same run. All combinations worked.
 
-### 6.6 What these tests don't show
+### 6.6 Against the official MCP test server
 
-All of this used my own test agent and my own test tools. That's good for proving the logic, but it isn't the same as months of use with popular agent products and real tool servers. I haven't done that yet, and I don't want to pretend otherwise.
+My own test tools only prove so much, because I wrote both sides. So I also put Cordon in front of the official reference server that the MCP project publishes for exactly this kind of testing (`@modelcontextprotocol/server-everything`, version 2.3.0).
+
+The test makes each call twice: once straight to the server, and once through Cordon. The two answers have to match exactly. If Cordon changed anything it wasn't supposed to, this would catch it.
+
+| What was checked | Result |
+| --- | --- |
+| The list of tools | All 22 came through unchanged |
+| Normal calls: text, structured data, images, links | Same answer both ways |
+| Errors, including bad arguments | Same error both ways |
+| A tool that asks the user a question, then finishes on a second call | Works through Cordon |
+| Progress updates from a slow tool | 4 sent, 4 passed along |
+| Private data read from the official server, then an attempt to send it out | Blocked, traced to the right tool, nothing got out |
+| An older style client talking to this newer server | Works |
+
+**26 out of 26 checks passed**, on repeated runs, without changing any of Cordon's code.
+
+### 6.7 What these tests don't show
+
+Most of this used my own test agent and my own test tools, plus the one official test server above. That's good for proving the logic and the plumbing, but it isn't the same as months of use with popular agent products driving it. I haven't done that yet, and I don't want to pretend otherwise.
 
 ## 7. Limits
 
